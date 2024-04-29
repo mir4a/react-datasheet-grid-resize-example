@@ -1,4 +1,194 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import useLocalStorageState from "use-local-storage-state";
+
+import {
+  DataSheetGrid,
+  checkboxColumn,
+  textColumn,
+  keyColumn,
+} from "react-datasheet-grid";
+
+// Import the style only once in your app!
+import "react-datasheet-grid/dist/style.css";
+
+const Example = () => {
+  const [initialColumnWidths, setInitialColumnWidths] = useLocalStorageState(
+    "columns",
+    {
+      defaultValue: [, , 200],
+    }
+  );
+  const [data, setData] = useState([
+    {
+      active: true,
+      firstName: "Elon",
+      lastName: "Musk",
+      fullName: "Elon Musk",
+      email: "ilo@ma.sk",
+      phone: "1234567890",
+    },
+    {
+      active: false,
+      firstName: "Jeff",
+      lastName: "Bezos",
+      fullName: "Jeff Bezos",
+      email: "je@ff.ck",
+      phone: "0987654321",
+    },
+    {
+      active: true,
+      firstName: "Bill",
+      lastName: "Gates",
+      fullName: "Bill Gates",
+      email: "bi+1@gat.es",
+      phone: "1234567890",
+    },
+    {
+      active: false,
+      firstName: "Warren",
+      lastName: "Buffett",
+      fullName: "Warren Buffett",
+      email: "warren1234@gmail.com",
+      phone: "0987654321",
+    },
+    {
+      active: true,
+      firstName: "Mark",
+      lastName: "Zuckerberg",
+      fullName: "Mark Zuckerberg",
+      email: "m@eta.cz",
+      phone: "1234567890",
+    },
+    {
+      active: false,
+      firstName: "Larry",
+      lastName: "Page",
+      fullName: "Larry Page",
+      email: "larry@outlook.com",
+      phone: "0987654321",
+    },
+    {
+      active: true,
+      firstName: "Sergey",
+      lastName: "Brin",
+      fullName: "Sergey Brin",
+      email: "seriy@office.com",
+      phone: "1234567890",
+    },
+    {
+      active: false,
+      firstName: "Larry",
+      lastName: "Ellison",
+      fullName: "Larry Ellison",
+      email: "larry123@outlook.com",
+      phone: "0987654321",
+    },
+    {
+      active: true,
+      firstName: "Michael",
+      lastName: "Dell",
+      fullName: "Michael Dell",
+      email: "michal@me.com",
+      phone: "1234567890",
+    },
+    {
+      active: false,
+      firstName: "Steve",
+      lastName: "Jobs",
+      fullName: "Steve Jobs",
+      email: "steve@seznam.cz",
+      phone: "0987654321",
+    },
+  ]);
+
+  const [columns, setColumns] = useState([
+    {
+      ...keyColumn("active", checkboxColumn),
+      title: "Active",
+      // resizable: false,
+    },
+    {
+      ...keyColumn("firstName", textColumn),
+      title: "First name",
+    },
+    {
+      ...keyColumn("lastName", textColumn),
+      title: "Last name",
+    },
+    {
+      ...keyColumn("fullName", textColumn),
+      title: "Full name",
+    },
+    {
+      ...keyColumn("email", textColumn),
+      title: "Email",
+    },
+    {
+      ...keyColumn("phone", textColumn),
+      title: "Phone",
+    },
+  ]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    async function dataFetchMock() {
+      setLoading(true);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setLoading(false);
+    }
+
+    dataFetchMock();
+  }, [columns]);
+
+  return (
+    <>
+      <button
+        className="p-2 my-4 bg-blue-500 text-white rounded-md"
+        onClick={() => {
+          const randomFrom100to500 = Math.floor(Math.random() * 400) + 100;
+          setInitialColumnWidths((prev) =>
+            prev.map((v, i) => (i === 2 ? randomFrom100to500 : v))
+          );
+        }}
+      >
+        Set random width for First name column
+      </button>
+      <button
+        className="p-2 my-4 bg-blue-500 text-white rounded-md"
+        onClick={() => {
+          const idString = Math.random().toString(36).substring(7);
+          // add new column
+          setColumns((prev) => [
+            ...prev,
+            {
+              ...keyColumn(idString, textColumn),
+              title: "New column",
+            },
+          ]);
+        }}
+      >
+        Add new column
+      </button>
+      <p>Saved width values:</p>
+      <pre>{JSON.stringify(initialColumnWidths)}</pre>
+      {loading && <p>Loading...</p>}
+      {!loading && (
+        <DataSheetGrid
+          value={data}
+          onChange={setData}
+          columns={columns}
+          // call save to persisting storage to restore the grid columns width on reload
+          onColumnsResize={setInitialColumnWidths}
+          // fetch saved columns width from persitent storage
+          initialColumnWidths={initialColumnWidths}
+        />
+      )}
+    </>
+  );
+};
 
 export default function Home() {
   return (
@@ -37,6 +227,10 @@ export default function Home() {
           height={37}
           priority
         />
+      </div>
+
+      <div className="w-full">
+        <Example />
       </div>
 
       <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
