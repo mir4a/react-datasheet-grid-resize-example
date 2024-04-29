@@ -9,10 +9,10 @@ import {
   checkboxColumn,
   textColumn,
   keyColumn,
-} from "react-datasheet-grid";
+} from "@mir4a/react-datasheet-grid";
 
 // Import the style only once in your app!
-import "react-datasheet-grid/dist/style.css";
+import "@mir4a/react-datasheet-grid/dist/style.css";
 
 const Example = () => {
   const [initialColumnWidths, setInitialColumnWidths] = useLocalStorageState(
